@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.gmall.order.mapper.OmsOrderMapper">
+    <select id="selectOrderByOutTradeCode" parameterType="String" resultMap="orderMap">
+SELECT
+	oo.id oo_id,
+	oo.*,
+	ooi.id,
+	ooi.*
+FROM
+	oms_order oo,
+	oms_order_item ooi
+WHERE
+	oo.order_sn = ooi.order_sn
+	and
+	oo.order_sn = #{outTradeNo}
+    </select>
+
+    <resultMap id="orderMap" type="com.atguigu.gmall.bean.OmsOrder" autoMapping="true">
+        <result property="id" column="oo_id"></result>
+        <collection property="omsOrderItems" autoMapping="true" ofType="com.atguigu.gmall.bean.OmsOrderItem">
+            <result property="id" column="ooi_id"></result>
+        </collection>
+    </resultMap>
+</mapper>

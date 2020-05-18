@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.gmall.manage.mapper.PmsProductSaleAttrMapper">
+    <!--根据spuId与skuId查询出spu的所有销售属性与值并将当前sku的属性值的isChecked字段设置为1-->
+    <select id="getSpuSaleAttrListBySpuIdAndSkuId" parameterType="map" resultMap="spuMap">
+                    SELECT
+            	psa.id AS psa_id,
+            	psa.*,
+            	psav.id AS psav_id,
+            	psav.*,
+            IF
+            	( ssav.sku_id IS NULL, 0, 1 ) AS isChecked
+            FROM
+            	pms_product_sale_attr psa
+            	INNER JOIN pms_product_sale_attr_value psav ON psa.sale_attr_id = psav.sale_attr_id
+            	AND psa.product_id = psav.product_id
+            	AND psa.product_id = #{spuId}
+            	LEFT JOIN pms_sku_sale_attr_value ssav ON psav.id = ssav.sale_attr_value_id
+            	AND ssav.sku_id = #{skuId}
+    </select>
+    <resultMap id="spuMap" type="com.atguigu.gmall.bean.PmsProductSaleAttr" autoMapping="true">
+        <id column="psa_id" property="id"></id>
+        <collection property="spuSaleAttrValueList" ofType="com.atguigu.gmall.bean.PmsProductSaleAttrValue" autoMapping="true">
+            <id column="psav_id" property="id"></id>
+        </collection>
+    </resultMap>
+</mapper>
